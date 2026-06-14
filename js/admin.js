@@ -254,7 +254,10 @@ function renderSkillList() {
       <div class="admin-item-icon">${esc(s.icon || '⚙️')}</div>
       <div class="admin-item-info">
         <div class="admin-item-title">${esc(s.name)}</div>
-        <div class="admin-item-meta"><span class="mini-tag">${esc(s.level || '')}</span></div>
+        <div class="admin-item-meta">
+          <span class="mini-tag" style="color:#ffc107;">${esc(s.level || '')}</span>
+          ${(s.tags || []).map(t => `<span class="mini-tag">${esc(t)}</span>`).join('')}
+        </div>
       </div>
       <div class="admin-item-actions">
         <button class="action-btn edit-btn" data-id="${esc(s.id)}" title="Edit">✏️</button>
@@ -291,10 +294,12 @@ function openSkillForm(id = null) {
     $('#skill-name').value  = skill.name  || '';
     $('#skill-icon').value  = skill.icon  || '⚙️';
     $('#skill-level').value = skill.level || 'Intermediate';
+    $('#skill-tags').value  = (skill.tags || []).join(', ');
   } else {
     title.textContent = 'Add New Skill';
     $('#skill-icon').value  = '⚙️';
     $('#skill-level').value = 'Intermediate';
+    $('#skill-tags').value  = '';
   }
   modal.classList.add('open');
 }
@@ -318,6 +323,7 @@ function initSkillForm() {
       name:  $('#skill-name').value.trim(),
       icon:  $('#skill-icon').value.trim() || '⚙️',
       level: $('#skill-level').value,
+      tags:  $('#skill-tags').value.split(',').map(t => t.trim()).filter(Boolean),
     };
     if (!data.name) { toast('Please enter a skill name', 'error'); return; }
 

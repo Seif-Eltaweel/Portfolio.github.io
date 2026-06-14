@@ -82,6 +82,15 @@ function applyMeta() {
   // Footer
   const footerName = $('#footer-name');
   if (footerName) footerName.textContent = meta.name;
+  const footerEmail = $('#footer-email');
+  const footerEmailWrap = $('#footer-email-wrap');
+  if (footerEmail && meta.email) {
+    footerEmail.href = `mailto:${meta.email}`;
+    footerEmail.textContent = meta.email;
+    if (footerEmailWrap) footerEmailWrap.style.display = 'inline';
+  } else if (footerEmailWrap) {
+    footerEmailWrap.style.display = 'none';
+  }
 
   // CV button
   const cvBtn = $('#cv-btn');
@@ -257,7 +266,11 @@ function renderSkills(filterList = activeSkillFilters) {
   const allSkills = DataStore.getSkills();
   let skills = allSkills;
   if (activeSkillFilters.length > 0) {
-    skills = allSkills.filter(s => s.level && activeSkillFilters.some(f => f.toLowerCase() === s.level.toLowerCase()));
+    skills = allSkills.filter(s => 
+      s.tags && activeSkillFilters.some(f => 
+        s.tags.some(t => t.toLowerCase() === f.toLowerCase())
+      )
+    );
   }
 
   const existingCards = $$('.skill-card', grid);
@@ -295,16 +308,26 @@ function renderSkillsFilters() {
   const container = $('#skills-filters');
   if (!container) return;
   const skills = DataStore.getSkills();
-  // Extract all non-empty level values
-  const allLevels = [...new Set(skills.map(s => s.level).filter(Boolean))].sort();
+  
+  const tagCounts = {};
+  skills.forEach(s => {
+    (s.tags || []).forEach(t => {
+      const clean = t ? t.trim() : '';
+      if (clean) {
+        tagCounts[clean] = (tagCounts[clean] || 0) + 1;
+      }
+    });
+  });
+  
+  const allTags = Object.keys(tagCounts).sort((a, b) => a.localeCompare(b));
 
   const renderFilterButtons = () => {
     const isAllActive = activeSkillFilters.length === 0;
     container.innerHTML = `
       <button class="filter-btn${isAllActive ? ' active' : ''}" data-filter="all">All</button>
-      ${allLevels.map(lvl => {
-        const isActive = activeSkillFilters.includes(lvl);
-        return `<button class="filter-btn${isActive ? ' active' : ''}" data-filter="${esc(lvl)}">${esc(lvl)}</button>`;
+      ${allTags.map(t => {
+        const isActive = activeSkillFilters.includes(t);
+        return `<button class="filter-btn${isActive ? ' active' : ''}" data-filter="${esc(t)}">${esc(t)} <span class="filter-count">(${tagCounts[t]})</span></button>`;
       }).join('')}
     `;
   };
