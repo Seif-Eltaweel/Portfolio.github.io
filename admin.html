@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Panel — Portfolio</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Admin-specific styles ─────────────────────────────── */
+    body { background: var(--bg-primary); }
+
+    /* Auth Gate */
+    #auth-gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      padding: 48px 40px;
+      text-align: center;
+    }
+    .auth-logo {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .auth-title {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .auth-sub {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      margin-bottom: 32px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(0, 200, 83, 0.04);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: var(--font-mono);
+      outline: none;
+      text-align: center;
+      letter-spacing: 4px;
+      transition: var(--transition);
+      margin-bottom: 16px;
+    }
+    .auth-input:focus { border-color: var(--accent-1); box-shadow: 0 0 0 3px var(--accent-glow); }
+    #auth-error {
+      color: #ef5350;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      min-height: 20px;
+      margin-top: -8px;
+      margin-bottom: 16px;
+    }
+    .auth-hint {
+      margin-top: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    /* Admin Panel Layout */
+    #admin-panel { display: none; min-height: 100vh; }
+
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 15, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .admin-header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 64px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .admin-logo {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent-2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-body {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Tabs */
+    .admin-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 32px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      width: fit-content;
+    }
+    .admin-tab {
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .admin-tab.active {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #000;
+    }
+    .admin-tab:not(.active):hover { color: var(--accent-2); background: rgba(0,200,83,0.07); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Section header */
+    .admin-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .admin-section-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .admin-section-count {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Admin list items */
+    .admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .admin-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+    .admin-item:hover { border-color: var(--border-hover); }
+    .admin-item-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .admin-item-info { flex: 1; min-width: 0; }
+    .admin-item-title {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .admin-item-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .mini-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(0,200,83,0.1);
+      color: var(--accent-3);
+      border: 1px solid rgba(0,200,83,0.2);
+    }
+    .admin-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .action-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .action-btn:hover { border-color: var(--accent-1); background: var(--accent-glow); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-family: var(--font-mono); font-size: 0.88rem; }
+
+    /* ── Modal ─────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 36px;
+      border-radius: var(--radius-lg);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-hover);
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+      animation: fadeUp 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .modal-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .modal-close:hover { border-color: var(--accent-1); color: var(--accent-2); }
+
+    /* Form inside modal */
+    .modal-card .form-group { margin-bottom: 18px; }
+    .modal-card .form-group label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-1);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: block;
+      margin-bottom: 7px;
+    }
+    .modal-card .form-group input,
+    .modal-card .form-group textarea,
+    .modal-card .form-group select {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(0,200,83,0.04);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      outline: none;
+      transition: var(--transition);
+      resize: vertical;
+    }
+    .modal-card .form-group input:focus,
+    .modal-card .form-group textarea:focus,
+    .modal-card .form-group select:focus {
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .modal-card .form-group select option { background: var(--bg-secondary); }
+    .modal-card .form-group textarea { min-height: 100px; }
+
+    .modal-hint {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(0,200,83,0.04);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .form-check input[type="checkbox"] { accent-color: var(--accent-1); width: 16px; height: 16px; }
+    .form-check label { cursor: pointer; color: var(--text-secondary); font-size: 0.9rem; }
+
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+
+    /* ── Profile Settings ───────────────────────────────────── */
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .settings-card {
+      padding: 32px;
+      border-radius: var(--radius-lg);
+    }
+    .settings-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .settings-card.full-width { grid-column: 1 / -1; }
+
+    /* Danger zone */
+    .danger-zone {
+      border-color: rgba(239, 83, 80, 0.3) !important;
+    }
+    .danger-zone h3 { color: #ef5350 !important; border-color: rgba(239, 83, 80, 0.2) !important; }
+    .btn-danger {
+      background: rgba(239, 83, 80, 0.1);
+      color: #ef5350;
+      border: 1.5px solid rgba(239, 83, 80, 0.3);
+    }
+    .btn-danger:hover { background: rgba(239, 83, 80, 0.2); border-color: #ef5350; transform: translateY(-2px); }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .admin-tabs { width: 100%; }
+      .admin-tab { flex: 1; padding: 10px 12px; font-size: 0.78rem; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .modal-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     AUTH GATE
+════════════════════════════════════════ -->
+<div id="auth-gate" aria-label="Admin authentication">
+  <div class="auth-card glass-card">
+    <div class="auth-logo" aria-hidden="true">🔐</div>
+    <div class="auth-title">Admin Panel</div>
+    <div class="auth-sub">portfolio/admin — restricted access</div>
+
+    <input
+      type="password"
+      class="auth-input"
+      id="auth-password"
+      placeholder="••••••••"
+      aria-label="Admin password"
+      autocomplete="current-password"
+    />
+    <div id="auth-error" aria-live="polite"></div>
+
+    <button class="btn btn-primary" id="auth-submit" style="width:100%; justify-content:center;">
+      Unlock Admin →
+    </button>
+
+
+    <p style="margin-top:12px;">
+      <a href="index.html" style="color:var(--text-muted); font-family:var(--font-mono); font-size:0.75rem;">← Back to portfolio</a>
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ADMIN PANEL
+════════════════════════════════════════ -->
+<div id="admin-panel">
+
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-logo">
+        <span>⚙️</span> Admin Panel
+      </div>
+      <div class="admin-header-actions">
+        <a href="index.html" class="btn btn-outline" style="padding:7px 16px; font-size:0.82rem;" target="_blank">
+          View Site ↗
+        </a>
+        <button class="btn btn-outline" id="logout-btn" style="padding:7px 16px; font-size:0.82rem;">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <main class="admin-body">
+
+    <!-- Tabs -->
+    <div class="admin-tabs" role="tablist" aria-label="Admin sections">
+      <button class="admin-tab active" data-tab="projects" role="tab" aria-selected="true" id="tab-btn-projects">🚀 Projects</button>
+      <button class="admin-tab" data-tab="skills"   role="tab" aria-selected="false" id="tab-btn-skills">⚙️ Skills</button>
+      <button class="admin-tab" data-tab="experience" role="tab" aria-selected="false" id="tab-btn-experience">💼 Experience</button>
+      <button class="admin-tab" data-tab="courses"  role="tab" aria-selected="false" id="tab-btn-courses">📚 Courses</button>
+      <button class="admin-tab" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings">👤 Profile</button>
+    </div>
+
+    <!-- ── TAB: Projects ──────────────────────────────────── -->
+    <div class="tab-content active" id="tab-projects" role="tabpanel" aria-labelledby="tab-btn-projects">
+      <div class="admin-section-header">
+        <div>
+          <div class="admin-section-title">Projects</div>
+          <div class="admin-section-count">Manage your portfolio projects</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <label class="form-check" style="padding: 8px 14px; margin: 0; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="toggle-sec-projects" checked />
+            <span style="font-size:0.85rem; color:var(--text-secondary); font-family:var(--font-heading); font-weight:500;">Published</span>
+          </label>
+          <button class="btn btn-primary" id="add-project-btn" aria-label="Add new project">
+            + Add Project
+          </button>
+        </div>
+      </div>
+      <div class="admin-list" id="project-list" aria-live="polite">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ── TAB: Skills ────────────────────────────────────── -->
+    <div class="tab-content" id="tab-skills" role="tabpanel" aria-labelledby="tab-btn-skills">
+      <div class="admin-section-header">
+        <div>
+          <div class="admin-section-title">Skills</div>
+          <div class="admin-section-count">Manage skills shown in the Skills section</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <label class="form-check" style="padding: 8px 14px; margin: 0; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="toggle-sec-skills" checked />
+            <span style="font-size:0.85rem; color:var(--text-secondary); font-family:var(--font-heading); font-weight:500;">Published</span>
+          </label>
+          <button class="btn btn-primary" id="add-skill-btn" aria-label="Add new skill">
+            + Add Skill
+          </button>
+        </div>
+      </div>
+      <div class="admin-list" id="skill-list" aria-live="polite">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ── TAB: Courses ───────────────────────────────────── -->
+    <div class="tab-content" id="tab-courses" role="tabpanel" aria-labelledby="tab-btn-courses">
+      <div class="admin-section-header">
+        <div>
+          <div class="admin-section-title">Courses & Certifications</div>
+          <div class="admin-section-count">Manage courses shown in the Courses section</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <label class="form-check" style="padding: 8px 14px; margin: 0; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="toggle-sec-courses" checked />
+            <span style="font-size:0.85rem; color:var(--text-secondary); font-family:var(--font-heading); font-weight:500;">Published</span>
+          </label>
+          <button class="btn btn-primary" id="add-course-btn" aria-label="Add new course">
+            + Add Course
+          </button>
+        </div>
+      </div>
+      <div class="admin-list" id="course-list" aria-live="polite">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ── TAB: Experience ────────────────────────────────── -->
+    <div class="tab-content" id="tab-experience" role="tabpanel" aria-labelledby="tab-btn-experience">
+      <div class="admin-section-header">
+        <div>
+          <div class="admin-section-title">Experience</div>
+          <div class="admin-section-count">Manage your career history / timeline</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <label class="form-check" style="padding: 8px 14px; margin: 0; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="toggle-sec-experience" checked />
+            <span style="font-size:0.85rem; color:var(--text-secondary); font-family:var(--font-heading); font-weight:500;">Published</span>
+          </label>
+          <button class="btn btn-primary" id="add-experience-btn" aria-label="Add new experience">
+            + Add Experience
+          </button>
+        </div>
+      </div>
+      <div class="admin-list" id="experience-list" aria-live="polite">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ── TAB: Profile / Settings ──────────────────────── -->
+    <div class="tab-content" id="tab-settings" role="tabpanel" aria-labelledby="tab-btn-settings">
+      <div class="admin-section-title" style="margin-bottom:24px;">Profile Settings</div>
+
+      <form id="meta-form" novalidate>
+        <div class="settings-grid">
+
+          <!-- Personal Info -->
+          <div class="settings-card glass-card">
+            <h3>👤 Personal Info</h3>
+            <div class="form-group">
+              <label for="meta-name">Full Name</label>
+              <input type="text" id="meta-name" name="name" placeholder="Jane Doe" autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label for="meta-role">Title / Role</label>
+              <input type="text" id="meta-role" name="role" placeholder="Data Scientist & ML Engineer" />
+            </div>
+            <div class="form-group">
+              <label for="meta-bio">Short Bio</label>
+              <textarea id="meta-bio" name="bio" placeholder="A brief intro about yourself…" style="min-height:90px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meta-email">Email Address</label>
+              <input type="email" id="meta-email" name="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="settings-card glass-card">
+            <h3>🔗 Social Links</h3>
+            <div class="form-group">
+              <label for="meta-github">GitHub URL</label>
+              <input type="url" id="meta-github" name="github" placeholder="https://github.com/username" />
+            </div>
+            <div class="form-group">
+              <label for="meta-linkedin">LinkedIn URL</label>
+              <input type="url" id="meta-linkedin" name="linkedin" placeholder="https://linkedin.com/in/username" />
+            </div>
+            <div class="form-group">
+              <label for="meta-twitter">Twitter / X URL</label>
+              <input type="url" id="meta-twitter" name="twitter" placeholder="https://twitter.com/username" />
+            </div>
+            <div class="form-group">
+              <label for="meta-cvurl">📄 CV / Resume URL</label>
+              <input type="url" id="meta-cvurl" name="cvUrl" placeholder="https://drive.google.com/file/d/.../view" />
+              <div class="modal-hint">Google Drive link or any URL — shown as "View CV" button in About section</div>
+            </div>
+            <div class="form-group">
+              <label for="meta-password">Admin Password</label>
+              <input type="text" id="meta-password" name="password" placeholder="Your admin password" autocomplete="off" />
+              <div class="modal-hint">⚠️ This is the password used to access this admin panel.</div>
+            </div>
+          </div>
+
+          <!-- Section Visibility -->
+          <div class="settings-card glass-card full-width">
+            <h3>👁️ Section Visibility</h3>
+            <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:16px;">
+              Toggle which sections of your portfolio are visible to visitors. Unchecked sections will be hidden.
+            </p>
+            <div class="settings-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; border:none; padding:0;">
+              <div class="form-check">
+                <input type="checkbox" id="sec-about" name="sec-about" checked />
+                <label for="sec-about">👤 About Section</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="sec-skills" name="sec-skills" checked />
+                <label for="sec-skills">💪 Skills Section</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="sec-experience" name="sec-experience" checked />
+                <label for="sec-experience">💼 Experience Section</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="sec-courses" name="sec-courses" checked />
+                <label for="sec-courses">📚 Courses Section</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="sec-projects" name="sec-projects" checked />
+                <label for="sec-projects">🚀 Projects Section</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" id="sec-contact" name="sec-contact" checked />
+                <label for="sec-contact">📧 Contact Section</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save Button -->
+          <div class="settings-card full-width" style="padding: 0; background:transparent; border:none;">
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:16px;" id="save-settings-btn">
+              💾 Save All Settings
+            </button>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="settings-card glass-card danger-zone full-width">
+            <h3>⚠️ Danger Zone</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
+              Resetting all data will delete all projects, skills, and profile settings and restore them to defaults.
+              This action <strong style="color:#ef5350;">cannot be undone</strong>.
+            </p>
+            <button type="button" class="btn btn-danger" id="reset-all-btn">
+              🗑️ Reset All Data to Defaults
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════
+     PROJECT MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-project-title">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-project-title">Add New Project</div>
+      <button class="modal-close" id="close-project-modal" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="project-form" novalidate>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="proj-title">Project Title *</label>
+          <input type="text" id="proj-title" name="title" placeholder="My ML Project" required />
+        </div>
+        <div class="form-group">
+          <label for="proj-emoji">Emoji Icon</label>
+          <input type="text" id="proj-emoji" name="emoji" placeholder="🚀" maxlength="4" />
+          <div class="modal-hint">Used as a placeholder if no image URL</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="proj-description">Description *</label>
+        <textarea id="proj-description" name="description" placeholder="Describe what this project does, the problem it solves, and the tech used…" required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="proj-tags">Technologies / Tags</label>
+          <input type="text" id="proj-tags" name="tags" placeholder="Python, TensorFlow, Docker" />
+          <div class="modal-hint">Comma-separated list</div>
+        </div>
+        <div class="form-group">
+          <label for="proj-difficulty">Difficulty Level</label>
+          <select id="proj-difficulty" name="difficulty">
+            <option value="Beginner">🟢 Beginner</option>
+            <option value="Intermediate" selected>🟡 Intermediate</option>
+            <option value="Advanced">🟠 Advanced</option>
+            <option value="Expert">🔴 Expert</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="proj-imageurl">Image URL</label>
+        <input type="url" id="proj-imageurl" name="imageUrl" placeholder="https://example.com/screenshot.png" />
+        <div class="modal-hint">Leave blank to use the emoji icon placeholder</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="proj-demourl">Live Demo URL</label>
+          <input type="url" id="proj-demourl" name="demoUrl" placeholder="https://myproject.com" />
+        </div>
+        <div class="form-group">
+          <label for="proj-githuburl">GitHub URL</label>
+          <input type="url" id="proj-githuburl" name="githubUrl" placeholder="https://github.com/user/repo" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="proj-videourl">Video URL (Google Drive)</label>
+        <input type="url" id="proj-videourl" name="videoUrl" placeholder="https://drive.google.com/file/d/.../view" />
+        <div class="modal-hint">Paste a Google Drive share link — it will be embedded automatically</div>
+      </div>
+
+      <div style="margin-bottom: 18px;">
+        <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-1); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px;">Button Visibility</label>
+        <div class="toggle-row">
+          <label for="proj-show-demo">🚀 Show Live Demo button</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="proj-show-demo" />
+            <span class="toggle-slider"></span>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <label for="proj-show-github">📂 Show GitHub button</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="proj-show-github" checked />
+            <span class="toggle-slider"></span>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <label for="proj-show-video">▶ Show Video button</label>
+          <div class="toggle-switch">
+            <input type="checkbox" id="proj-show-video" />
+            <span class="toggle-slider"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="proj-featured" name="featured" />
+        <label for="proj-featured">⭐ Mark as featured project</label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancel-project">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-project-btn">Save Project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SKILL MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="skill-modal" role="dialog" aria-modal="true" aria-labelledby="modal-skill-title">
+  <div class="modal-card" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-skill-title">Add New Skill</div>
+      <button class="modal-close" id="close-skill-modal" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="skill-form" novalidate>
+      <div class="form-group">
+        <label for="skill-name">Skill Name *</label>
+        <input type="text" id="skill-name" name="name" placeholder="e.g. TensorFlow" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="skill-icon">Emoji Icon</label>
+          <input type="text" id="skill-icon" name="icon" placeholder="⚙️" maxlength="4" />
+        </div>
+        <div class="form-group">
+          <label for="skill-level">Proficiency Level</label>
+          <select id="skill-level" name="level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate" selected>Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Expert">Expert</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancel-skill">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-skill-btn">Save Skill</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     COURSE MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="course-modal" role="dialog" aria-modal="true" aria-labelledby="modal-course-title">
+  <div class="modal-card" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-course-title">Add New Course</div>
+      <button class="modal-close" id="close-course-modal" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="course-form" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="course-title">Course Title *</label>
+          <input type="text" id="course-title" name="title" placeholder="e.g. Machine Learning Specialization" required />
+        </div>
+        <div class="form-group">
+          <label for="course-icon">Emoji Icon</label>
+          <input type="text" id="course-icon" name="icon" placeholder="📚" maxlength="4" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="course-provider">Provider / Platform</label>
+        <input type="text" id="course-provider" name="provider" placeholder="e.g. Coursera, Udemy, edX" />
+      </div>
+
+      <div class="form-group">
+        <label for="course-description">Description</label>
+        <textarea id="course-description" name="description" placeholder="What you learned in this course…" style="min-height:80px;"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="course-date">Completion Date</label>
+          <input type="text" id="course-date" name="date" placeholder="e.g. 2024, Jan 2024" />
+        </div>
+        <div class="form-group">
+          <label for="course-url">Certificate URL</label>
+          <input type="url" id="course-url" name="url" placeholder="https://certificate-link.com" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancel-course">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-course-btn">Save Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     EXPERIENCE MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="experience-modal" role="dialog" aria-modal="true" aria-labelledby="modal-experience-title">
+  <div class="modal-card" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-experience-title">Add New Experience</div>
+      <button class="modal-close" id="close-experience-modal" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="experience-form" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="exp-period">Period / Dates *</label>
+          <input type="text" id="exp-period" name="period" placeholder="e.g. 2025 — Present" required />
+        </div>
+        <div class="form-group">
+          <label for="exp-role">Role / Position *</label>
+          <input type="text" id="exp-role" name="role" placeholder="e.g. Data Scientist" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="exp-company">Company / Organization *</label>
+        <input type="text" id="exp-company" name="company" placeholder="e.g. Acme Corp or Self-employed" required />
+      </div>
+
+      <div class="form-group">
+        <label for="exp-description">Description / Responsibilities</label>
+        <textarea id="exp-description" name="description" placeholder="Describe your achievements, technologies used, and responsibilities…" style="min-height:100px;"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancel-experience">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-experience-btn">Save Experience</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
