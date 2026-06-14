@@ -3,6 +3,37 @@
  */
 import { DataStore } from './projects.js';
 
+// Auto-sync wrapper for DataStore edits
+const originalSaveMeta = DataStore.saveMeta;
+DataStore.saveMeta = function(meta) {
+  originalSaveMeta.call(DataStore, meta);
+  pushToGitHub();
+};
+
+const originalSaveProjects = DataStore.saveProjects;
+DataStore.saveProjects = function(projects) {
+  originalSaveProjects.call(DataStore, projects);
+  pushToGitHub();
+};
+
+const originalSaveSkills = DataStore.saveSkills;
+DataStore.saveSkills = function(skills) {
+  originalSaveSkills.call(DataStore, skills);
+  pushToGitHub();
+};
+
+const originalSaveCourses = DataStore.saveCourses;
+DataStore.saveCourses = function(courses) {
+  originalSaveCourses.call(DataStore, courses);
+  pushToGitHub();
+};
+
+const originalSaveExperience = DataStore.saveExperience;
+DataStore.saveExperience = function(experience) {
+  originalSaveExperience.call(DataStore, experience);
+  pushToGitHub();
+};
+
 /* ── Helpers ──────────────────────────────────────────────── */
 function $(sel, ctx = document) { return ctx.querySelector(sel); }
 function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
@@ -521,6 +552,8 @@ function loadMeta() {
   $('#meta-twitter').value  = meta.twitter  || '';
   $('#meta-cvurl').value    = meta.cvUrl    || '';
   $('#meta-password').value = meta.password || '';
+  $('#meta-avatarurl').value = meta.avatarUrl || '';
+  $('#meta-ga-id').value    = meta.googleAnalyticsId || '';
 
   // Section visibility checkboxes
   $('#sec-about').checked      = !!(meta.sections && meta.sections.about !== false);
@@ -535,6 +568,8 @@ function loadMeta() {
   if ($('#toggle-sec-skills'))     $('#toggle-sec-skills').checked     = !!(meta.sections && meta.sections.skills !== false);
   if ($('#toggle-sec-experience')) $('#toggle-sec-experience').checked = !!(meta.sections && meta.sections.experience !== false);
   if ($('#toggle-sec-courses'))    $('#toggle-sec-courses').checked    = !!(meta.sections && meta.sections.courses !== false);
+
+  loadGitSettings();
 }
 
 function initMetaForm() {
@@ -549,6 +584,11 @@ function initMetaForm() {
       projects:   $('#sec-projects').checked,
       contact:    $('#sec-contact').checked,
     };
+    
+    // Save git sync details in localStorage for security first
+    saveGitSettings();
+
+    // Save metadata (which will trigger pushToGitHub with the updated git credentials)
     DataStore.saveMeta({
       ...meta,
       name:     $('#meta-name').value.trim(),
@@ -559,6 +599,8 @@ function initMetaForm() {
       linkedin: $('#meta-linkedin').value.trim(),
       twitter:  $('#meta-twitter').value.trim(),
       cvUrl:    $('#meta-cvurl').value.trim(),
+      avatarUrl: $('#meta-avatarurl').value.trim(),
+      googleAnalyticsId: $('#meta-ga-id').value.trim(),
       password: $('#meta-password').value.trim() || meta.password,
       sections: updatedSections,
     });
@@ -593,6 +635,134 @@ function initSectionToggles() {
   });
 }
 
+/* ── Git Settings Loading & Saving ─────────────────────────── */
+function loadGitSettings() {
+  $('#git-username').value = localStorage.getItem('portfolio_git_username') || '';
+  $('#git-repo').value     = localStorage.getItem('portfolio_git_repo') || '';
+  $('#git-branch').value   = localStorage.getItem('portfolio_git_branch') || 'main';
+  $('#git-pat').value      = localStorage.getItem('portfolio_git_pat') || '';
+}
+
+function saveGitSettings() {
+  localStorage.setItem('portfolio_git_username', $('#git-username').value.trim());
+  localStorage.setItem('portfolio_git_repo',     $('#git-repo').value.trim());
+  localStorage.setItem('portfolio_git_branch',   $('#git-branch').value.trim() || 'main');
+  localStorage.setItem('portfolio_git_pat',      $('#git-pat').value.trim());
+}
+
+/* ── GitHub API Communication ─────────────────────────────── */
+async function pushToGitHub() {
+  const username = localStorage.getItem('portfolio_git_username');
+  const repo     = localStorage.getItem('portfolio_git_repo');
+  const branch   = localStorage.getItem('portfolio_git_branch') || 'main';
+  const pat      = localStorage.getItem('portfolio_git_pat');
+
+  if (!username || !repo || !pat) {
+    console.info('GitHub sync settings are incomplete. Saved locally only.');
+    return;
+  }
+
+  const path = 'data/portfolio_data.json';
+  const url = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+  const authHeaders = {
+    'Authorization': `token ${pat}`,
+    'Accept': 'application/vnd.github.v3+json'
+  };
+
+  try {
+    // 1. Fetch metadata to get current file SHA (required by GitHub API for updates)
+    let sha = null;
+    const getRes = await fetch(`${url}?ref=${branch}`, {
+      headers: authHeaders,
+      cache: 'no-store'
+    });
+    if (getRes.status === 200) {
+      const getJson = await getRes.json();
+      sha = getJson.sha;
+    } else if (getRes.status !== 404) {
+      const errText = await getRes.text();
+      throw new Error(`Failed to check existing file. Status: ${getRes.status}. Details: ${errText}`);
+    }
+
+    // 2. Prepare the payload
+    const allData = DataStore.getAllData();
+    const contentString = JSON.stringify(allData, null, 2);
+    // Base64 encode with UTF-8 character support
+    const contentBase64 = btoa(unescape(encodeURIComponent(contentString)));
+
+    const body = {
+      message: 'Update portfolio data from Admin Panel',
+      content: contentBase64,
+      branch: branch
+    };
+    if (sha) {
+      body.sha = sha;
+    }
+
+    // 3. PUT request to commit to the repository
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (putRes.ok) {
+      toast('Changes pushed to GitHub successfully! 🚀');
+    } else {
+      const errText = await putRes.text();
+      throw new Error(`Failed to commit changes. Status: ${putRes.status}. Details: ${errText}`);
+    }
+  } catch (error) {
+    console.error('Error syncing with GitHub:', error);
+    toast(`GitHub sync failed: ${error.message}`, 'error');
+  }
+}
+
+async function testGitHubConnection() {
+  const username = $('#git-username').value.trim();
+  const repo     = $('#git-repo').value.trim();
+  const branch   = $('#git-branch').value.trim() || 'main';
+  const pat      = $('#git-pat').value.trim();
+
+  if (!username || !repo || !pat) {
+    toast('Please fill in Username, Repository, and Personal Access Token.', 'error');
+    return;
+  }
+
+  const testBtn = $('#test-git-btn');
+  const originalText = testBtn.textContent;
+  testBtn.textContent = '⚡ Connecting...';
+  testBtn.disabled = true;
+
+  try {
+    const url = `https://api.github.com/repos/${username}/${repo}/branches/${branch}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `token ${pat}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (res.ok) {
+      toast('GitHub connection verified! Repo & Branch found. 🎉');
+      // Save configuration
+      saveGitSettings();
+    } else {
+      const errJson = await res.json().catch(() => ({}));
+      const details = errJson.message || res.statusText;
+      toast(`Connection failed: ${details}`, 'error');
+    }
+  } catch (e) {
+    toast(`Network error: ${e.message}`, 'error');
+  } finally {
+    testBtn.textContent = originalText;
+    testBtn.disabled = false;
+  }
+}
+
 /* ── Danger Zone ──────────────────────────────────────────── */
 function initDanger() {
   $('#reset-all-btn')?.addEventListener('click', () => {
@@ -611,7 +781,10 @@ function initDanger() {
 }
 
 /* ── Init ─────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load remote data first
+  await DataStore.loadRemoteData();
+
   initAuth();
   initTabs();
   initProjectForm();
@@ -621,4 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMetaForm();
   initSectionToggles();
   initDanger();
+
+  // Bind Git connection test
+  $('#test-git-btn')?.addEventListener('click', testGitHubConnection);
 });

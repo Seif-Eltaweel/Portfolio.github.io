@@ -558,6 +558,11 @@
               <label for="meta-email">Email Address</label>
               <input type="email" id="meta-email" name="email" placeholder="you@example.com" autocomplete="email" />
             </div>
+            <div class="form-group">
+              <label for="meta-avatarurl">Profile Avatar URL</label>
+              <input type="url" id="meta-avatarurl" name="avatarUrl" placeholder="https://example.com/avatar.jpg" />
+              <div class="modal-hint">Leave blank to use default emoji placeholder</div>
+            </div>
           </div>
 
           <!-- Social Links -->
@@ -584,6 +589,41 @@
               <label for="meta-password">Admin Password</label>
               <input type="text" id="meta-password" name="password" placeholder="Your admin password" autocomplete="off" />
               <div class="modal-hint">⚠️ This is the password used to access this admin panel.</div>
+            </div>
+            <div class="form-group">
+              <label for="meta-ga-id">Google Analytics ID</label>
+              <input type="text" id="meta-ga-id" name="googleAnalyticsId" placeholder="G-XXXXXXXXXX" />
+              <div class="modal-hint">Enter your GA4 Measurement ID (e.g. G-12345678) to track traffic.</div>
+            </div>
+          </div>
+
+          <!-- GitHub CMS Sync Settings -->
+          <div class="settings-card glass-card">
+            <h3>⚙️ GitHub CMS Sync</h3>
+            <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:16px;">
+              Configure Git-based CMS to commit your changes to GitHub repository so they are visible to everyone. These credentials are saved in this browser only.
+            </p>
+            <div class="form-group">
+              <label for="git-username">GitHub Username</label>
+              <input type="text" id="git-username" placeholder="e.g. Seif-Eltaweel" />
+            </div>
+            <div class="form-group">
+              <label for="git-repo">Repository Name</label>
+              <input type="text" id="git-repo" placeholder="e.g. Seif-Data-Science-Portfolio" />
+            </div>
+            <div class="form-group">
+              <label for="git-branch">Branch</label>
+              <input type="text" id="git-branch" placeholder="main" value="main" />
+            </div>
+            <div class="form-group">
+              <label for="git-pat">Personal Access Token (PAT)</label>
+              <input type="password" id="git-pat" placeholder="github_pat_..." autocomplete="off" />
+              <div class="modal-hint">Requires a fine-grained token with <strong>Contents: Read & Write</strong> permissions to this repository.</div>
+            </div>
+            <div style="margin-top: 16px;">
+              <button type="button" class="btn btn-outline" id="test-git-btn" style="width:100%; justify-content:center;">
+                🔄 Test Connection
+              </button>
             </div>
           </div>
 

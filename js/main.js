@@ -247,104 +247,223 @@ function initReveal() {
 }
 
 /* ── Skills Rendering ──────────────────────────────────────── */
-function renderSkills() {
+let activeSkillFilters = [];
+
+function renderSkills(filterList = activeSkillFilters) {
+  activeSkillFilters = filterList;
   const grid = $('#skills-grid');
   if (!grid) return;
+
+  const allSkills = DataStore.getSkills();
+  let skills = allSkills;
+  if (activeSkillFilters.length > 0) {
+    skills = allSkills.filter(s => s.level && activeSkillFilters.some(f => f.toLowerCase() === s.level.toLowerCase()));
+  }
+
+  const existingCards = $$('.skill-card', grid);
+
+  const proceedWithRender = () => {
+    if (skills.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;"><p>No skills match the selected filters.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = skills.map((s, idx) => `
+      <div class="skill-card fade-scale-in" style="animation-delay: ${idx * 40}ms; opacity: 0;">
+        <div class="skill-icon">${esc(s.icon || '⚙️')}</div>
+        <div class="skill-name">${esc(s.name)}</div>
+        <div class="skill-level">${esc(s.level || '')}</div>
+      </div>
+    `).join('');
+
+    initReveal();
+  };
+
+  if (existingCards.length > 0) {
+    existingCards.forEach(c => {
+      c.classList.remove('reveal', 'visible', 'fade-scale-in');
+      c.classList.add('fade-scale-out');
+      c.style.animationDelay = '0ms';
+    });
+    setTimeout(proceedWithRender, 250);
+  } else {
+    proceedWithRender();
+  }
+}
+
+function renderSkillsFilters() {
+  const container = $('#skills-filters');
+  if (!container) return;
   const skills = DataStore.getSkills();
-  grid.innerHTML = skills.map(s => `
-    <div class="skill-card reveal">
-      <div class="skill-icon">${esc(s.icon || '⚙️')}</div>
-      <div class="skill-name">${esc(s.name)}</div>
-      <div class="skill-level">${esc(s.level || '')}</div>
-    </div>
-  `).join('');
-  initReveal();
+  // Extract all non-empty level values
+  const allLevels = [...new Set(skills.map(s => s.level).filter(Boolean))].sort();
+
+  const renderFilterButtons = () => {
+    const isAllActive = activeSkillFilters.length === 0;
+    container.innerHTML = `
+      <button class="filter-btn${isAllActive ? ' active' : ''}" data-filter="all">All</button>
+      ${allLevels.map(lvl => {
+        const isActive = activeSkillFilters.includes(lvl);
+        return `<button class="filter-btn${isActive ? ' active' : ''}" data-filter="${esc(lvl)}">${esc(lvl)}</button>`;
+      }).join('')}
+    `;
+  };
+
+  renderFilterButtons();
+
+  container.addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    const filter = btn.dataset.filter;
+
+    if (filter === 'all') {
+      activeSkillFilters = [];
+    } else {
+      if (activeSkillFilters.includes(filter)) {
+        activeSkillFilters = activeSkillFilters.filter(f => f !== filter);
+      } else {
+        activeSkillFilters.push(filter);
+      }
+    }
+
+    renderFilterButtons();
+    renderSkills(activeSkillFilters);
+  });
 }
 
 /* ── Projects Rendering ────────────────────────────────────── */
-let activeFilter = 'all';
+let activeFilters = [];
 
-function renderProjects(filter = activeFilter) {
-  activeFilter = filter;
+function renderProjects(filterList = activeFilters) {
+  activeFilters = filterList;
   const grid = $('#projects-grid');
   if (!grid) return;
 
-  let projects = DataStore.getProjects();
-  if (filter !== 'all') {
-    projects = projects.filter(p => p.tags && p.tags.some(t => t.toLowerCase() === filter.toLowerCase()));
+  const allProjects = DataStore.getProjects();
+  let projects = allProjects;
+  if (activeFilters.length > 0) {
+    // Filter projects that match ANY active filters (OR selection)
+    projects = allProjects.filter(p => 
+      activeFilters.some(fTag => 
+        p.tags && p.tags.some(pTag => pTag.toLowerCase() === fTag.toLowerCase())
+      )
+    );
   }
 
-  if (projects.length === 0) {
-    grid.innerHTML = `
-      <div class="no-projects">
-        <div class="no-projects-icon">📂</div>
-        No projects found. <a href="admin.html" style="color:var(--accent-2);">Add one via Admin ↗</a>
+  const existingCards = $$('.project-card', grid);
+
+  const proceedWithRender = () => {
+    if (projects.length === 0) {
+      grid.innerHTML = `
+        <div class="no-projects">
+          <div class="no-projects-icon">📂</div>
+          No projects found matching all selected filters.
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = projects.map((p, idx) => {
+      const showDemo   = p.showDemo   !== false && p.demoUrl;
+      const showGithub = p.showGithub !== false && p.githubUrl;
+      const showVideo  = p.showVideo  === true  && p.videoUrl;
+
+      return `
+      <div class="project-card glass-card fade-scale-in" data-id="${esc(p.id)}" style="animation-delay: ${idx * 60}ms; opacity: 0;">
+        <div class="project-image-wrap">
+          ${p.imageUrl
+            ? `<img class="project-image" src="${esc(p.imageUrl)}" alt="${esc(p.title)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'project-image-placeholder\\'>${esc(p.emoji || '🚀')}</div>'">`
+            : `<div class="project-image-placeholder">${esc(p.emoji || '🚀')}</div>`}
+          <div class="project-image-overlay">
+            ${showDemo    ? `<a href="${esc(p.demoUrl)}"   class="btn btn-primary" target="_blank">🚀 Demo</a>` : ''}
+            ${showGithub  ? `<a href="${esc(p.githubUrl)}" class="btn btn-outline" target="_blank">📂 Code</a>` : ''}
+            ${showVideo   ? `<button class="btn btn-outline video-play-btn" data-video="${esc(p.videoUrl)}" data-title="${esc(p.title)}">▶ Video</button>` : ''}
+          </div>
+        </div>
+        <div class="project-body">
+          ${difficultyHTML(p.difficulty)}
+          <div class="project-title">${esc(p.title)}</div>
+          <div class="project-desc">${esc(p.description)}</div>
+          <div class="project-tags">
+            ${(p.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
+          </div>
+          <div class="project-links">
+            ${showDemo   ? `<a href="${esc(p.demoUrl)}"   class="project-link" target="_blank">🚀 Live Demo</a>` : ''}
+            ${showGithub ? `<a href="${esc(p.githubUrl)}" class="project-link" target="_blank">📂 GitHub</a>`    : ''}
+            ${showVideo  ? `<button class="project-link video-play-btn" data-video="${esc(p.videoUrl)}" data-title="${esc(p.title)}">▶ Video</button>` : ''}
+          </div>
+        </div>
       </div>`;
-    return;
-  }
+    }).join('');
 
-  grid.innerHTML = projects.map(p => {
-    // Determine which buttons to show
-    const showDemo   = p.showDemo   !== false && p.demoUrl;
-    const showGithub = p.showGithub !== false && p.githubUrl;
-    const showVideo  = p.showVideo  === true  && p.videoUrl;
-
-    return `
-    <div class="project-card glass-card reveal" data-id="${esc(p.id)}">
-      <div class="project-image-wrap">
-        ${p.imageUrl
-          ? `<img class="project-image" src="${esc(p.imageUrl)}" alt="${esc(p.title)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'project-image-placeholder\\'>${esc(p.emoji || '🚀')}</div>'">`
-          : `<div class="project-image-placeholder">${esc(p.emoji || '🚀')}</div>`}
-        <div class="project-image-overlay">
-          ${showDemo    ? `<a href="${esc(p.demoUrl)}"   class="btn btn-primary" target="_blank">🚀 Demo</a>` : ''}
-          ${showGithub  ? `<a href="${esc(p.githubUrl)}" class="btn btn-outline" target="_blank">📂 Code</a>` : ''}
-          ${showVideo   ? `<button class="btn btn-outline video-play-btn" data-video="${esc(p.videoUrl)}" data-title="${esc(p.title)}">▶ Video</button>` : ''}
-        </div>
-      </div>
-      <div class="project-body">
-        ${difficultyHTML(p.difficulty)}
-        <div class="project-title">${esc(p.title)}</div>
-        <div class="project-desc">${esc(p.description)}</div>
-        <div class="project-tags">
-          ${(p.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
-        </div>
-        <div class="project-links">
-          ${showDemo   ? `<a href="${esc(p.demoUrl)}"   class="project-link" target="_blank">🚀 Live Demo</a>` : ''}
-          ${showGithub ? `<a href="${esc(p.githubUrl)}" class="project-link" target="_blank">📂 GitHub</a>`    : ''}
-          ${showVideo  ? `<button class="project-link video-play-btn" data-video="${esc(p.videoUrl)}" data-title="${esc(p.title)}">▶ Video</button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Bind video play buttons
-  $$('.video-play-btn', grid).forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-      openVideoModal(btn.dataset.video, btn.dataset.title);
+    $$('.video-play-btn', grid).forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        openVideoModal(btn.dataset.video, btn.dataset.title);
+      });
     });
-  });
 
-  initReveal();
+    initReveal();
+  };
+
+  if (existingCards.length > 0) {
+    existingCards.forEach(c => {
+      c.classList.remove('reveal', 'visible', 'fade-scale-in');
+      c.classList.add('fade-scale-out');
+      c.style.animationDelay = '0ms';
+    });
+    setTimeout(proceedWithRender, 250);
+  } else {
+    proceedWithRender();
+  }
 }
 
 function renderFilters() {
   const container = $('#project-filters');
   if (!container) return;
   const projects = DataStore.getProjects();
-  const allTags  = [...new Set(projects.flatMap(p => p.tags || []))].sort();
+  
+  const tagCounts = {};
+  projects.forEach(p => {
+    (p.tags || []).forEach(t => {
+      const clean = t ? t.trim() : '';
+      if (clean) {
+        tagCounts[clean] = (tagCounts[clean] || 0) + 1;
+      }
+    });
+  });
+  
+  const allTags = Object.keys(tagCounts).sort((a, b) => a.localeCompare(b));
 
-  container.innerHTML = `
-    <button class="filter-btn active" data-filter="all">All</button>
-    ${allTags.map(t => `<button class="filter-btn" data-filter="${esc(t)}">${esc(t)}</button>`).join('')}
-  `;
+  const renderFilterButtons = () => {
+    const isAllActive = activeFilters.length === 0;
+    container.innerHTML = `
+      <button class="filter-btn${isAllActive ? ' active' : ''}" data-filter="all">All</button>
+      ${allTags.map(t => {
+        const isActive = activeFilters.includes(t);
+        return `<button class="filter-btn${isActive ? ' active' : ''}" data-filter="${esc(t)}">${esc(t)} <span class="filter-count">(${tagCounts[t]})</span></button>`;
+      }).join('')}
+    `;
+  };
+
+  renderFilterButtons();
 
   container.addEventListener('click', e => {
     const btn = e.target.closest('.filter-btn');
     if (!btn) return;
-    $$('.filter-btn', container).forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderProjects(btn.dataset.filter);
+    const filter = btn.dataset.filter;
+
+    if (filter === 'all') {
+      activeFilters = [];
+    } else {
+      if (activeFilters.includes(filter)) {
+        activeFilters = activeFilters.filter(f => f !== filter);
+      } else {
+        activeFilters.push(filter);
+      }
+    }
+
+    renderFilterButtons();
+    renderProjects(activeFilters);
   });
 }
 
@@ -492,14 +611,100 @@ function initContactForm() {
   });
 }
 
+/* ── Theme Toggling ────────────────────────────────────────── */
+function initTheme() {
+  const btn = $('#theme-toggle-btn');
+  if (!btn) return;
+  const currentTheme = localStorage.getItem('portfolio_theme') || 'dark';
+  if (currentTheme === 'light') {
+    document.body.classList.add('light-theme');
+    btn.textContent = '🌙';
+  } else {
+    document.body.classList.remove('light-theme');
+    btn.textContent = '☀️';
+  }
+
+  btn.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light-theme');
+    localStorage.setItem('portfolio_theme', isLight ? 'light' : 'dark');
+    btn.textContent = isLight ? '🌙' : '☀️';
+  });
+}
+
+/* ── Profile Avatar Rendering ──────────────────────────────── */
+function renderAvatar() {
+  const meta = DataStore.getMeta();
+  const wrap = $('.about-image-wrap');
+  if (!wrap) return;
+
+  const container = $('.about-avatar-placeholder', wrap) || $('.about-avatar-img', wrap);
+  if (!container) return;
+
+  if (meta.avatarUrl) {
+    if (container.tagName !== 'IMG') {
+      const img = document.createElement('img');
+      img.className = 'about-avatar-img';
+      img.alt = 'Profile avatar';
+      img.src = meta.avatarUrl;
+      img.onerror = () => {
+        img.replaceWith(createPlaceholderAvatar());
+      };
+      container.replaceWith(img);
+    } else {
+      container.src = meta.avatarUrl;
+    }
+  } else {
+    if (container.tagName === 'IMG') {
+      container.replaceWith(createPlaceholderAvatar());
+    }
+  }
+}
+
+function createPlaceholderAvatar() {
+  const d = document.createElement('div');
+  d.className = 'about-avatar-placeholder';
+  d.setAttribute('role', 'img');
+  d.setAttribute('aria-label', 'Profile avatar');
+  d.textContent = '👨‍💻';
+  return d;
+}
+
+/* ── Google Analytics Integration ──────────────────────────── */
+function initGoogleAnalytics() {
+  const meta = DataStore.getMeta();
+  const gaId = meta.googleAnalyticsId ? meta.googleAnalyticsId.trim() : '';
+  if (!gaId) return;
+
+  if ($('script[src*="googletagmanager.com"]')) return;
+
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+  document.head.appendChild(s);
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', gaId);
+}
+
 /* ── Init ──────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for remote portfolio data to load
+  await DataStore.loadRemoteData();
+
+  // Initialize theme, GA, and avatar representation
+  initTheme();
+  initGoogleAnalytics();
+  renderAvatar();
+
   applyMeta();
   initCanvas();
   initNav();
   initTypewriter();
   initReveal();
   renderSkills();
+  renderSkillsFilters();
   renderExperience();
   renderFilters();
   renderProjects();

@@ -21,6 +21,8 @@ const DEFAULT_META = {
   linkedin: 'https://www.linkedin.com/in/seif-hussien/',
   twitter:  '',
   cvUrl:    '',
+  avatarUrl: '',
+  googleAnalyticsId: '',
   password: 'admin123',
   // Section visibility — true = visible
   sections: {
@@ -199,32 +201,89 @@ const DEFAULT_PROJECTS = [
   },
 ];
 
+function safeParse(str, fallback) {
+  if (!str) return fallback;
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    console.error('Error parsing JSON from localStorage:', e);
+    return fallback;
+  }
+}
+
 /* ── Data Access Layer ─────────────────────────────────────── */
 export const DataStore = {
+  _data: null,
+
+  async loadRemoteData() {
+    try {
+      // Use no-cache or fetch cache-busting to ensure we always get latest file from GitHub Pages
+      const res = await fetch('./data/portfolio_data.json?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        this._data = json;
+        // Warm up localStorage caches
+        localStorage.setItem(STORAGE_KEYS.META, JSON.stringify(json.meta || {}));
+        localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(json.projects || []));
+        localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(json.skills || []));
+        localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(json.courses || []));
+        localStorage.setItem(STORAGE_KEYS.EXPERIENCE, JSON.stringify(json.experience || []));
+        return json;
+      }
+    } catch (e) {
+      console.warn('Could not load portfolio_data.json, falling back to localStorage cache:', e);
+    }
+    
+    // Fallback: populate from localStorage
+    this._data = {
+      meta: this.getMeta(),
+      projects: this.getProjects(),
+      skills: this.getSkills(),
+      courses: this.getCourses(),
+      experience: this.getExperience()
+    };
+    return this._data;
+  },
+
+  getAllData() {
+    return {
+      meta: this.getMeta(),
+      projects: this.getProjects(),
+      skills: this.getSkills(),
+      courses: this.getCourses(),
+      experience: this.getExperience()
+    };
+  },
+
   // --- Meta / Profile ---
   getMeta() {
+    if (this._data && this._data.meta) {
+      return { ...DEFAULT_META, ...this._data.meta, sections: { ...DEFAULT_META.sections, ...(this._data.meta.sections || {}) } };
+    }
     const raw = localStorage.getItem(STORAGE_KEYS.META);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Ensure sections key always has defaults
+    const parsed = safeParse(raw, null);
+    if (parsed) {
       return { ...DEFAULT_META, ...parsed, sections: { ...DEFAULT_META.sections, ...(parsed.sections || {}) } };
     }
     return { ...DEFAULT_META };
   },
   saveMeta(meta) {
+    if (this._data) this._data.meta = meta;
     localStorage.setItem(STORAGE_KEYS.META, JSON.stringify(meta));
   },
 
   // --- Projects ---
   getProjects() {
+    if (this._data && this._data.projects) return this._data.projects;
     const raw = localStorage.getItem(STORAGE_KEYS.PROJECTS);
     if (!raw) {
       this.saveProjects(DEFAULT_PROJECTS);
       return [...DEFAULT_PROJECTS];
     }
-    return JSON.parse(raw);
+    return safeParse(raw, DEFAULT_PROJECTS);
   },
   saveProjects(projects) {
+    if (this._data) this._data.projects = projects;
     localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
   },
   addProject(project) {
@@ -245,14 +304,16 @@ export const DataStore = {
 
   // --- Skills ---
   getSkills() {
+    if (this._data && this._data.skills) return this._data.skills;
     const raw = localStorage.getItem(STORAGE_KEYS.SKILLS);
     if (!raw) {
       this.saveSkills(DEFAULT_SKILLS);
       return [...DEFAULT_SKILLS];
     }
-    return JSON.parse(raw);
+    return safeParse(raw, DEFAULT_SKILLS);
   },
   saveSkills(skills) {
+    if (this._data) this._data.skills = skills;
     localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
   },
   addSkill(skill) {
@@ -273,14 +334,16 @@ export const DataStore = {
 
   // --- Courses ---
   getCourses() {
+    if (this._data && this._data.courses) return this._data.courses;
     const raw = localStorage.getItem(STORAGE_KEYS.COURSES);
     if (!raw) {
       this.saveCourses(DEFAULT_COURSES);
       return [...DEFAULT_COURSES];
     }
-    return JSON.parse(raw);
+    return safeParse(raw, DEFAULT_COURSES);
   },
   saveCourses(courses) {
+    if (this._data) this._data.courses = courses;
     localStorage.setItem(STORAGE_KEYS.COURSES, JSON.stringify(courses));
   },
   addCourse(course) {
@@ -301,14 +364,16 @@ export const DataStore = {
 
   // --- Experience ---
   getExperience() {
+    if (this._data && this._data.experience) return this._data.experience;
     const raw = localStorage.getItem(STORAGE_KEYS.EXPERIENCE);
     if (!raw) {
       this.saveExperience(DEFAULT_EXPERIENCE);
       return [...DEFAULT_EXPERIENCE];
     }
-    return JSON.parse(raw);
+    return safeParse(raw, DEFAULT_EXPERIENCE);
   },
   saveExperience(experience) {
+    if (this._data) this._data.experience = experience;
     localStorage.setItem(STORAGE_KEYS.EXPERIENCE, JSON.stringify(experience));
   },
   addExperience(item) {
