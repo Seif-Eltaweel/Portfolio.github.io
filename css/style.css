@@ -44,6 +44,30 @@
   --nav-height:    72px;
 }
 
+body.light-theme {
+  --bg-primary:    #f4f9f5;
+  --bg-secondary:  #e8f2eb;
+  --bg-card:       rgba(232, 242, 235, 0.7);
+  --bg-glass:      rgba(255, 255, 255, 0.6);
+
+  --accent-1:      #00a846;
+  --accent-2:      #008f3a;
+  --accent-3:      #1b5e20;
+  --accent-glow:   rgba(0, 168, 70, 0.15);
+
+  --text-primary:  #0a1d13;
+  --text-secondary:#1e462d;
+  --text-muted:    #4e785c;
+
+  --border-color:  rgba(0, 168, 70, 0.15);
+  --border-hover:  rgba(0, 168, 70, 0.4);
+
+  --shadow-sm:     0 2px 12px rgba(0,0,0,0.08);
+  --shadow-md:     0 8px 32px rgba(0,0,0,0.1);
+  --shadow-glow:   0 0 40px rgba(0, 168, 70, 0.1);
+}
+
+
 /* --- Reset --- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
