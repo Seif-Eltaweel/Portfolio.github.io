@@ -41,25 +41,6 @@
       "featured": true
     },
     {
-      "id": "p3_new",
-      "title": "WearIT — Generative AI Fashion Tech Startup",
-      "description": "Founded WearIT, fine-tuning diffusion models (Generative AI) to generate realistic Egyptian fashion presentations and marketing materials.",
-      "tags": [
-        "AI Engineering",
-        "Python"
-      ],
-      "imageUrl": "",
-      "emoji": "👗",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
       "id": "p4_new",
       "title": "Competitor Analytics Dashboard (HamberHub)",
       "description": "Scraped facebook groups and pages for lead generation, built competitor analytics dashboards, and generated strategic insights about the market from competitor data.",
