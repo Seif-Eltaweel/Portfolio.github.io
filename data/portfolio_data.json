@@ -8,9 +8,9 @@
     "linkedin": "https://www.linkedin.com/in/seif-hussien",
     "twitter": "",
     "cvUrl": "",
-    "password": "admin123",
     "avatarUrl": "",
     "googleAnalyticsId": "",
+    "password": "admin123",
     "sections": {
       "about": true,
       "skills": true,
@@ -20,20 +20,380 @@
       "contact": true
     }
   },
+  "projects": [
+    {
+      "id": "p1_new",
+      "title": "2-Hydroxychalcone Asthma Research Publication",
+      "description": "Co-authored paper: '2-Hydroxychalcone Attenuates Airway Inflammation, Oxidative Stress, and NF-кВ Activation in Ovalbumin-Induced Asthma Model,' published in a peer-reviewed international journal.",
+      "tags": [
+        "Bioinformatics",
+        "Data Science"
+      ],
+      "imageUrl": "",
+      "emoji": "🔬",
+      "demoUrl": "https://doi.org/10.1080/02770903.2025.2526384",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Expert",
+      "showDemo": true,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p2_new",
+      "title": "Green Synthesis of Cerium Oxide Nanoparticles",
+      "description": "Co-authored research paper on green synthesis of Cerium Oxide nanoparticles, studying its effect in silico using Molecular docking and in vivo using DNA binding and Gel-electrophoresis.",
+      "tags": [
+        "Bioinformatics",
+        "Data Science"
+      ],
+      "imageUrl": "",
+      "emoji": "🧪",
+      "demoUrl": "",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Expert",
+      "showDemo": false,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p3_new",
+      "title": "WearIT — Generative AI Fashion Tech Startup",
+      "description": "Founded WearIT, fine-tuning diffusion models (Generative AI) to generate realistic Egyptian fashion presentations and marketing materials.",
+      "tags": [
+        "AI Engineering",
+        "Python"
+      ],
+      "imageUrl": "",
+      "emoji": "👗",
+      "demoUrl": "",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Expert",
+      "showDemo": false,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p4_new",
+      "title": "Competitor Analytics Dashboard (HamberHub)",
+      "description": "Scraped facebook groups and pages for lead generation, built competitor analytics dashboards, and generated strategic insights about the market from competitor data.",
+      "tags": [
+        "Data Analysis",
+        "Python"
+      ],
+      "imageUrl": "",
+      "emoji": "📊",
+      "demoUrl": "",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Intermediate",
+      "showDemo": false,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": false
+    },
+    {
+      "id": "p5_new",
+      "title": "Researchs matchmaking system",
+      "description": "Created matchmaking algorithms for a two-sided marketplace, connecting volunteer research assistants with academic researchers.",
+      "tags": [
+        "Data Science",
+        "Python"
+      ],
+      "imageUrl": "",
+      "emoji": "🤝",
+      "demoUrl": "",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Advanced",
+      "showDemo": false,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": false
+    },
+    {
+      "id": "p1",
+      "title": "Python Agriculture Data Analysis",
+      "description": "Data analysis using Python that helped in solving the agriculture problem of a whole nation. Explored key agricultural metrics, performed EDA, and delivered actionable insights for policy-making.",
+      "tags": [
+        "Python",
+        "Data Analysis",
+        "Pandas",
+        "Matplotlib"
+      ],
+      "imageUrl": "",
+      "emoji": "🌾",
+      "demoUrl": "",
+      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/Python_agri_project",
+      "videoUrl": "",
+      "difficulty": "Intermediate",
+      "showDemo": false,
+      "showGithub": true,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p2",
+      "title": "SDG 6: Clean Water — Google Sheets Analysis",
+      "description": "Explores UN Sustainable Development Goal 6 (SDG 6): Clean Water and Sanitation, using data from the WHO/UNICEF Joint Monitoring Programme (JMP). Analyzes global inequalities in access to safe drinking water from 2000 to 2020, focusing on urban vs. rural disparities.",
+      "tags": [
+        "Google Sheets",
+        "Data Analysis",
+        "SDG",
+        "Visualization"
+      ],
+      "imageUrl": "",
+      "emoji": "💧",
+      "demoUrl": "https://docs.google.com/spreadsheets/d/1gbgzMAZo0XPmiiFw5TvPC88yIYSsK7WYBrHizP0OVZw/edit?usp=sharing",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Beginner",
+      "showDemo": true,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": false
+    },
+    {
+      "id": "p3",
+      "title": "SQL Data Analysis — The Movies Database",
+      "description": "Explored The Movie Database (TMDB), a comprehensive dataset containing information about movies, TV shows, actors, genres, and awards. Using SQL and data analysis techniques, answered a series of questions to uncover insights about the film industry.",
+      "tags": [
+        "SQL",
+        "Data Analysis",
+        "TMDB",
+        "Python"
+      ],
+      "imageUrl": "",
+      "emoji": "🎬",
+      "demoUrl": "",
+      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/blob/main/Movie_project.ipynb",
+      "videoUrl": "",
+      "difficulty": "Intermediate",
+      "showDemo": false,
+      "showGithub": true,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p4",
+      "title": "Power BI — Water Access Development Dashboard",
+      "description": "Moderates and analyzes national water development data using Power BI and other analytics tools, tracking key metrics to support informed decision-making on sustainable water management. Interactive dashboards enhance transparency while data-driven recommendations improve water infrastructure.",
+      "tags": [
+        "Power BI",
+        "Data Visualization",
+        "Dashboard",
+        "Analytics"
+      ],
+      "imageUrl": "",
+      "emoji": "📊",
+      "demoUrl": "https://drive.google.com/file/d/1ky3wDsTx9VkreCLoAOebfK3rOSR_zFgT/view?usp=sharing",
+      "githubUrl": "",
+      "videoUrl": "",
+      "difficulty": "Intermediate",
+      "showDemo": true,
+      "showGithub": false,
+      "showVideo": false,
+      "featured": false
+    },
+    {
+      "id": "p5",
+      "title": "Decision Tree Regression Model",
+      "description": "Builds a Decision Tree Regression model to predict population growth rates from 1960-2017. Involves calculating growth rates, splitting data into even-year training and odd-year testing sets, training the model, and evaluating performance using Root Mean Squared Logarithmic Error (RMSLE).",
+      "tags": [
+        "Python",
+        "Machine Learning",
+        "Scikit-learn",
+        "Decision Tree"
+      ],
+      "imageUrl": "",
+      "emoji": "🌳",
+      "demoUrl": "",
+      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/blob/main/Decision_tree_Project/Decision_tree_Project.ipynb",
+      "videoUrl": "",
+      "difficulty": "Advanced",
+      "showDemo": false,
+      "showGithub": true,
+      "showVideo": false,
+      "featured": false
+    },
+    {
+      "id": "p6",
+      "title": "House Price Prediction in Beijing",
+      "description": "An end-to-end project covering data analysis, ML model training, and deployment for housing data in Beijing from 2013 to 2017. Predicts house prices using feature engineering and regression models.",
+      "tags": [
+        "Python",
+        "Machine Learning",
+        "Regression",
+        "Deployment"
+      ],
+      "imageUrl": "",
+      "emoji": "🏠",
+      "demoUrl": "",
+      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/BJ-Housing%20price%20prediction",
+      "videoUrl": "",
+      "difficulty": "Advanced",
+      "showDemo": false,
+      "showGithub": true,
+      "showVideo": false,
+      "featured": true
+    },
+    {
+      "id": "p7",
+      "title": "RAG Fintech Customer Segmentation",
+      "description": "Demonstrates how raw customer transaction records are transformed into retrievable monthly documents and queried via a lightweight RAG loop. Combines NLP, embeddings, and retrieval-augmented generation for intelligent customer segmentation.",
+      "tags": [
+        "Python",
+        "RAG",
+        "NLP",
+        "LLM",
+        "Fintech"
+      ],
+      "imageUrl": "",
+      "emoji": "🤖",
+      "demoUrl": "",
+      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/RAG_project_for_customer_segementation",
+      "videoUrl": "",
+      "difficulty": "Expert",
+      "showDemo": false,
+      "showGithub": true,
+      "showVideo": false,
+      "featured": true
+    }
+  ],
   "skills": [
-    { "id": "s1", "name": "Python Programming", "icon": "🐍", "level": "Expert", "tags": ["Python", "Data Science", "AI Engineering", "Bioinformatics"] },
-    { "id": "s2", "name": "Machine Learning & Regression", "icon": "🤖", "level": "Advanced", "tags": ["Data Science", "AI Engineering"] },
-    { "id": "s3", "name": "RNA-seq & Omics Analysis", "icon": "🧬", "level": "Advanced", "tags": ["Bioinformatics", "Data Science"] },
-    { "id": "s4", "name": "SQL & Data Engineering", "icon": "🗄️", "level": "Advanced", "tags": ["Data Analysis", "Data Science"] },
-    { "id": "s5", "name": "AI Agent Workflows & Automation", "icon": "⚙️", "level": "Advanced", "tags": ["AI Engineering"] },
-    { "id": "s6", "name": "Molecular Docking & Drug Design", "icon": "🔬", "level": "Advanced", "tags": ["Bioinformatics"] },
-    { "id": "s7", "name": "Power BI & Looker Dashboards", "icon": "📊", "level": "Advanced", "tags": ["Data Analysis"] },
-    { "id": "s8", "name": "LLMs, RAG & Fine-Tuning", "icon": "🧠", "level": "Advanced", "tags": ["AI Engineering", "Data Science"] },
-    { "id": "s9", "name": "Prompt Engineering & n8n", "icon": "⚡", "level": "Advanced", "tags": ["AI Engineering"] },
-    { "id": "s10", "name": "Big Data Analysis", "icon": "🗃️", "level": "Advanced", "tags": ["Data Science", "Data Analysis"] },
-    { "id": "s11", "name": "Git & Docker", "icon": "🐳", "level": "Intermediate", "tags": ["Python", "Data Science", "AI Engineering"] },
-    { "id": "s12", "name": "Community & L&D Management", "icon": "👥", "level": "Expert", "tags": ["Data Science", "Data Analysis"] },
-    { "id": "s13", "name": "Scientific Research & Writing", "icon": "📝", "level": "Advanced", "tags": ["Bioinformatics"] }
+    {
+      "id": "s1",
+      "name": "Python Programming",
+      "icon": "🐍",
+      "level": "Expert",
+      "tags": [
+        "Python",
+        "Data Science",
+        "AI Engineering",
+        "Bioinformatics"
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Machine Learning & Regression",
+      "icon": "🤖",
+      "level": "Advanced",
+      "tags": [
+        "Data Science",
+        "AI Engineering"
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "RNA-seq & Omics Analysis",
+      "icon": "🧬",
+      "level": "Advanced",
+      "tags": [
+        "Bioinformatics",
+        "Data Science"
+      ]
+    },
+    {
+      "id": "s4",
+      "name": "SQL & Data Engineering",
+      "icon": "🗄️",
+      "level": "Advanced",
+      "tags": [
+        "Data Analysis",
+        "Data Science"
+      ]
+    },
+    {
+      "id": "s5",
+      "name": "AI Agent Workflows & Automation",
+      "icon": "⚙️",
+      "level": "Advanced",
+      "tags": [
+        "AI Engineering"
+      ]
+    },
+    {
+      "id": "s6",
+      "name": "Molecular Docking & Drug Design",
+      "icon": "🔬",
+      "level": "Advanced",
+      "tags": [
+        "Bioinformatics"
+      ]
+    },
+    {
+      "id": "s7",
+      "name": "Power BI & Looker Dashboards",
+      "icon": "📊",
+      "level": "Advanced",
+      "tags": [
+        "Data Analysis"
+      ]
+    },
+    {
+      "id": "s8",
+      "name": "LLMs, RAG & Fine-Tuning",
+      "icon": "🧠",
+      "level": "Advanced",
+      "tags": [
+        "AI Engineering",
+        "Data Science"
+      ]
+    },
+    {
+      "id": "s9",
+      "name": "Prompt Engineering & n8n",
+      "icon": "⚡",
+      "level": "Advanced",
+      "tags": [
+        "AI Engineering"
+      ]
+    },
+    {
+      "id": "s10",
+      "name": "Big Data Analysis",
+      "icon": "🗃️",
+      "level": "Advanced",
+      "tags": [
+        "Data Science",
+        "Data Analysis"
+      ]
+    },
+    {
+      "id": "s11",
+      "name": "Git & Docker",
+      "icon": "🐳",
+      "level": "Intermediate",
+      "tags": [
+        "Python",
+        "Data Science",
+        "AI Engineering"
+      ]
+    },
+    {
+      "id": "s12",
+      "name": "Community & L&D Management",
+      "icon": "👥",
+      "level": "Expert",
+      "tags": [
+        "Data Science",
+        "Data Analysis"
+      ]
+    },
+    {
+      "id": "s13",
+      "name": "Scientific Research & Writing",
+      "icon": "📝",
+      "level": "Advanced",
+      "tags": [
+        "Bioinformatics"
+      ]
+    }
   ],
   "courses": [
     {
@@ -122,200 +482,6 @@
       "role": "Self-employed & Freelance",
       "company": "Programming Mentor, AI Trainer & Analyst",
       "description": "Programming mentor for kids, Science tutor, and Chemistry AI Trainer. Founder of WearIT (Generative AI startup fine-tuning diffusion models for fashion presentations). Business analyst for travel agency N.Melody (optimized website, scraped travel agency data)."
-    }
-  ],
-  "projects": [
-    {
-      "id": "p1_new",
-      "title": "2-Hydroxychalcone Asthma Research Publication",
-      "description": "Co-authored paper: '2-Hydroxychalcone Attenuates Airway Inflammation, Oxidative Stress, and NF-кВ Activation in Ovalbumin-Induced Asthma Model,' published in a peer-reviewed international journal.",
-      "tags": ["Bioinformatics", "Data Science"],
-      "imageUrl": "",
-      "emoji": "🔬",
-      "demoUrl": "https://doi.org/10.1080/02770903.2025.2526384",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": true,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p2_new",
-      "title": "Green Synthesis of Cerium Oxide Nanoparticles",
-      "description": "Co-authored research paper on green synthesis of Cerium Oxide nanoparticles, studying its effect in silico using Molecular docking and in vivo using DNA binding and Gel-electrophoresis.",
-      "tags": ["Bioinformatics", "Data Science"],
-      "imageUrl": "",
-      "emoji": "🧪",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p3_new",
-      "title": "WearIT — Generative AI Fashion Tech Startup",
-      "description": "Founded WearIT, fine-tuning diffusion models (Generative AI) to generate realistic Egyptian fashion presentations and marketing materials.",
-      "tags": ["AI Engineering", "Python"],
-      "imageUrl": "",
-      "emoji": "👗",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p4_new",
-      "title": "Competitor Analytics Dashboard (HamberHub)",
-      "description": "Scraped facebook groups and pages for lead generation, built competitor analytics dashboards, and generated strategic insights about the market from competitor data.",
-      "tags": ["Data Analysis", "Python"],
-      "imageUrl": "",
-      "emoji": "📊",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Intermediate",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": false
-    },
-    {
-      "id": "p5_new",
-      "title": "Matchmaking Algorithms (IYM Journal Hub)",
-      "description": "Created matchmaking algorithms for a two-sided marketplace, connecting volunteer research assistants with academic researchers.",
-      "tags": ["Data Science", "Python"],
-      "imageUrl": "",
-      "emoji": "🤝",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Advanced",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": false
-    },
-    {
-      "id": "p1",
-      "title": "Python Agriculture Data Analysis",
-      "description": "Data analysis using Python that helped in solving the agriculture problem of a whole nation. Explored key agricultural metrics, performed EDA, and delivered actionable insights for policy-making.",
-      "tags": ["Python", "Data Analysis", "Pandas", "Matplotlib"],
-      "imageUrl": "",
-      "emoji": "🌾",
-      "demoUrl": "",
-      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/Python_agri_project",
-      "videoUrl": "",
-      "difficulty": "Intermediate",
-      "showDemo": false,
-      "showGithub": true,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p2",
-      "title": "SDG 6: Clean Water — Google Sheets Analysis",
-      "description": "Explores UN Sustainable Development Goal 6 (SDG 6): Clean Water and Sanitation, using data from the WHO/UNICEF Joint Monitoring Programme (JMP). Analyzes global inequalities in access to safe drinking water from 2000 to 2020, focusing on urban vs. rural disparities.",
-      "tags": ["Google Sheets", "Data Analysis", "SDG", "Visualization"],
-      "imageUrl": "",
-      "emoji": "💧",
-      "demoUrl": "https://docs.google.com/spreadsheets/d/1gbgzMAZo0XPmiiFw5TvPC88yIYSsK7WYBrHizP0OVZw/edit?usp=sharing",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Beginner",
-      "showDemo": true,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": false
-    },
-    {
-      "id": "p3",
-      "title": "SQL Data Analysis — The Movies Database",
-      "description": "Explored The Movie Database (TMDB), a comprehensive dataset containing information about movies, TV shows, actors, genres, and awards. Using SQL and data analysis techniques, answered a series of questions to uncover insights about the film industry.",
-      "tags": ["SQL", "Data Analysis", "TMDB", "Python"],
-      "imageUrl": "",
-      "emoji": "🎬",
-      "demoUrl": "",
-      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/blob/main/Movie_project.ipynb",
-      "videoUrl": "",
-      "difficulty": "Intermediate",
-      "showDemo": false,
-      "showGithub": true,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p4",
-      "title": "Power BI — Water Access Development Dashboard",
-      "description": "Moderates and analyzes national water development data using Power BI and other analytics tools, tracking key metrics to support informed decision-making on sustainable water management. Interactive dashboards enhance transparency while data-driven recommendations improve water infrastructure.",
-      "tags": ["Power BI", "Data Visualization", "Dashboard", "Analytics"],
-      "imageUrl": "",
-      "emoji": "📊",
-      "demoUrl": "https://drive.google.com/file/d/1ky3wDsTx9VkreCLoAOebfK3rOSR_zFgT/view?usp=sharing",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Intermediate",
-      "showDemo": true,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": false
-    },
-    {
-      "id": "p5",
-      "title": "Decision Tree Regression Model",
-      "description": "Builds a Decision Tree Regression model to predict population growth rates from 1960-2017. Involves calculating growth rates, splitting data into even-year training and odd-year testing sets, training the model, and evaluating performance using Root Mean Squared Logarithmic Error (RMSLE).",
-      "tags": ["Python", "Machine Learning", "Scikit-learn", "Decision Tree"],
-      "imageUrl": "",
-      "emoji": "🌳",
-      "demoUrl": "",
-      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/blob/main/Decision_tree_Project/Decision_tree_Project.ipynb",
-      "videoUrl": "",
-      "difficulty": "Advanced",
-      "showDemo": false,
-      "showGithub": true,
-      "showVideo": false,
-      "featured": false
-    },
-    {
-      "id": "p6",
-      "title": "House Price Prediction in Beijing",
-      "description": "An end-to-end project covering data analysis, ML model training, and deployment for housing data in Beijing from 2013 to 2017. Predicts house prices using feature engineering and regression models.",
-      "tags": ["Python", "Machine Learning", "Regression", "Deployment"],
-      "imageUrl": "",
-      "emoji": "🏠",
-      "demoUrl": "",
-      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/BJ-Housing%20price%20prediction",
-      "videoUrl": "",
-      "difficulty": "Advanced",
-      "showDemo": false,
-      "showGithub": true,
-      "showVideo": false,
-      "featured": true
-    },
-    {
-      "id": "p7",
-      "title": "RAG Fintech Customer Segmentation",
-      "description": "Demonstrates how raw customer transaction records are transformed into retrievable monthly documents and queried via a lightweight RAG loop. Combines NLP, embeddings, and retrieval-augmented generation for intelligent customer segmentation.",
-      "tags": ["Python", "RAG", "NLP", "LLM", "Fintech"],
-      "imageUrl": "",
-      "emoji": "🤖",
-      "demoUrl": "",
-      "githubUrl": "https://github.com/Seif-Eltaweel/Seif-Data-Science-Portfolio/tree/main/RAG_project_for_customer_segementation",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": false,
-      "showGithub": true,
-      "showVideo": false,
-      "featured": true
     }
   ]
 }
