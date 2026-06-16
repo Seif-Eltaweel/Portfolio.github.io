@@ -13,7 +13,7 @@
     "password": "admin123",
     "sections": {
       "about": true,
-      "skills": false,
+      "skills": true,
       "experience": true,
       "courses": true,
       "projects": true,
