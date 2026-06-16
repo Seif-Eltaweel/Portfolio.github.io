@@ -22,25 +22,6 @@
   },
   "projects": [
     {
-      "id": "p1_new",
-      "title": "2-Hydroxychalcone Asthma Research Publication",
-      "description": "Co-authored paper: '2-Hydroxychalcone Attenuates Airway Inflammation, Oxidative Stress, and NF-кВ Activation in Ovalbumin-Induced Asthma Model,' published in a peer-reviewed international journal.",
-      "tags": [
-        "Bioinformatics",
-        "Data Science"
-      ],
-      "imageUrl": "",
-      "emoji": "🔬",
-      "demoUrl": "https://doi.org/10.1080/02770903.2025.2526384",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": true,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
       "id": "p2_new",
       "title": "Green Synthesis of Cerium Oxide Nanoparticles",
       "description": "Co-authored research paper on green synthesis of Cerium Oxide nanoparticles, studying its effect in silico using Molecular docking and in vivo using DNA binding and Gel-electrophoresis.",
