@@ -22,25 +22,6 @@
   },
   "projects": [
     {
-      "id": "p2_new",
-      "title": "Green Synthesis of Cerium Oxide Nanoparticles",
-      "description": "Co-authored research paper on green synthesis of Cerium Oxide nanoparticles, studying its effect in silico using Molecular docking and in vivo using DNA binding and Gel-electrophoresis.",
-      "tags": [
-        "Bioinformatics",
-        "Data Science"
-      ],
-      "imageUrl": "",
-      "emoji": "🧪",
-      "demoUrl": "",
-      "githubUrl": "",
-      "videoUrl": "",
-      "difficulty": "Expert",
-      "showDemo": false,
-      "showGithub": false,
-      "showVideo": false,
-      "featured": true
-    },
-    {
       "id": "p4_new",
       "title": "Competitor Analytics Dashboard (HamberHub)",
       "description": "Scraped facebook groups and pages for lead generation, built competitor analytics dashboards, and generated strategic insights about the market from competitor data.",
