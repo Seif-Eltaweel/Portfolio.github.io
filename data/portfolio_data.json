@@ -15,7 +15,7 @@
       "about": true,
       "skills": true,
       "experience": false,
-      "courses": true,
+      "courses": false,
       "projects": true,
       "contact": true
     }
